@@ -1,2 +1,5 @@
 # windsurf rules
 .windsurfrules
+
+# Environment variables
+.env
