@@ -2,7 +2,33 @@ package models
 
 import (
 	"time"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+// ServiceType defines the type of appointment/service provided.
+type ServiceType string
+
+const (
+	ServiceConsultation ServiceType = "consulta"
+	ServiceEvaluation   ServiceType = "avaliação"
+	ServiceWeighing     ServiceType = "pesagem"
+	ServiceFollowUp     ServiceType = "retorno"
+	ServiceOther        ServiceType = "outro"
+)
+
+// PaymentMethod defines how an appointment was paid for.
+type PaymentMethod string
+
+const (
+	PaymentCash         PaymentMethod = "dinheiro"
+	PaymentCreditCard   PaymentMethod = "cartão de crédito"
+	PaymentDebitCard    PaymentMethod = "cartão de débito"
+	PaymentPIX          PaymentMethod = "pix"
+	PaymentBankTransfer PaymentMethod = "transferência bancária"
+	PaymentCheck        PaymentMethod = "cheque"
+	PaymentInsurance    PaymentMethod = "convênio"
+	PaymentOther        PaymentMethod = "outro"
 )
 
 // Appointment holds details about a single patient visit/interaction.

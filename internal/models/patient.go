@@ -2,7 +2,43 @@ package models
 
 import (
 	"time"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+// Gender represents the sex of the patient.
+type Gender string
+
+const (
+	Male   Gender = "masculino"
+	Female Gender = "feminino"
+	Other  Gender = "outro"
+)
+
+// MaritalStatus represents the patient's marital status.
+type MaritalStatus string
+
+const (
+	Single         MaritalStatus = "solteiro(a)"
+	Married        MaritalStatus = "casado(a)"
+	Divorced       MaritalStatus = "divorciado(a)"
+	Widowed        MaritalStatus = "viúvo(a)"
+	StableUnion    MaritalStatus = "união estável"
+	MaritalUnknown MaritalStatus = "desconhecido"
+)
+
+// EducationLevel represents the patient's education level.
+type EducationLevel string
+
+const (
+	IncompleteElementary EducationLevel = "fundamental incompleto"
+	CompleteElementary   EducationLevel = "fundamental completo"
+	IncompleteHighSchool EducationLevel = "médio incompleto"
+	CompleteHighSchool   EducationLevel = "médio completo"
+	IncompleteHigherEd   EducationLevel = "superior incompleto"
+	CompleteHigherEd     EducationLevel = "superior completo"
+	PostGraduate         EducationLevel = "pós-graduação"
+	EducationUnknown     EducationLevel = "desconhecido"
 )
 
 // Patient represents a nutritionist's patient record for MongoDB.
@@ -14,8 +50,8 @@ type Patient struct {
 	Birthdate           time.Time           `bson:"birthdate,omitempty" json:"birthdate,omitempty"`
 	Age                 int                 `bson:"age,omitempty" json:"age,omitempty"`
 	Sex                 string              `bson:"sex,omitempty" json:"sex,omitempty"`
-	EducationLevel      string              `bson:"educationLevel,omitempty" json:"educationLevel,omitempty"`
-	MaritalStatus       string              `bson:"maritalStatus,omitempty" json:"maritalStatus,omitempty"`
+	EducationLevel      EducationLevel      `bson:"educationLevel,omitempty" json:"educationLevel,omitempty"`
+	MaritalStatus       MaritalStatus       `bson:"maritalStatus,omitempty" json:"maritalStatus,omitempty"`
 	Profession          string              `bson:"profession,omitempty" json:"profession,omitempty"`
 	Address             string              `bson:"address,omitempty" json:"address,omitempty"`
 	Phones              []string            `bson:"phones,omitempty" json:"phones,omitempty"`
