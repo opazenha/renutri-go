@@ -27,12 +27,25 @@ func main() {
 		panic(err)
 	}
 
-	// clean legacy schema and migrate fresh Patient table
+	// clean legacy schema and migrate all relational tables
 	if err := dbConn.Exec("DROP TABLE IF EXISTS patients CASCADE").Error; err != nil {
 		panic(err)
 	}
-	if err := dbConn.AutoMigrate(&models.Patient{}); err != nil {
-		panic(fmt.Errorf("auto-migrate patient: %w", err))
+	if err := dbConn.AutoMigrate(
+		&models.Patient{},
+		&models.Appointment{},
+		&models.HealthCondition{},
+		&models.Habit{},
+		&models.ClinicalEvaluation{},
+		&models.AnthropometricAssessment{},
+		&models.NutritionalNeedsCalculation{},
+		&models.DietPlan{},
+		&models.Meal{},
+		&models.FoodSubstitution{},
+		&models.Guidance{},
+		&models.GeneratedDocument{},
+	); err != nil {
+		panic(fmt.Errorf("auto-migrate models: %w", err))
 	}
 
 	r := gin.Default()

@@ -25,16 +25,16 @@ func NewPatientRepository(db *gorm.DB) PatientRepository {
 }
 
 func (r *patientRepo) CreatePatient(patient *models.Patient) error {
-    // ensure PatientID is a valid UUID
-    if patient.PatientID == "" {
-        patient.PatientID = uuid.New().String()
+    // ensure ID is a valid UUID
+    if patient.ID == "" {
+        patient.ID = uuid.New().String()
     }
     return r.db.Create(patient).Error
 }
 
 func (r *patientRepo) GetPatientByID(id string) (*models.Patient, error) {
     var patient models.Patient
-    err := r.db.First(&patient, "patient_id = ?", id).Error
+    err := r.db.First(&patient, "id = ?", id).Error
     return &patient, err
 }
 
@@ -43,7 +43,7 @@ func (r *patientRepo) UpdatePatient(patient *models.Patient) error {
 }
 
 func (r *patientRepo) DeletePatient(id string) error {
-    return r.db.Delete(&models.Patient{}, "patient_id = ?", id).Error
+    return r.db.Delete(&models.Patient{}, "id = ?", id).Error
 }
 
 func (r *patientRepo) ListPatients() ([]models.Patient, error) {
