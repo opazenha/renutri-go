@@ -2,13 +2,24 @@ package handler
 
 import (
 	"net/http"
-	"github.com/gin-gonic/gin"
 	"renutri/internal/models"
 	"renutri/internal/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 type HabitHandler struct {
 	Service *service.HabitService
+}
+
+func RegisterHabitRoutes(r *gin.Engine, svc *service.HabitService) {
+  h := NewHabitHandler(svc)
+  grp := r.Group("/habits")
+  grp.POST("",    h.Create)
+  grp.GET("",     h.List)
+  grp.GET("/:id", h.GetByID)
+  grp.PUT("/:id", h.Update)
+  grp.DELETE("/:id", h.Delete)
 }
 
 func NewHabitHandler(svc *service.HabitService) *HabitHandler {

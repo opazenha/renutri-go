@@ -55,6 +55,10 @@ func main() {
 	svc := service.NewPatientService(repo)
 	handler.NewPatientHandler(r, svc)
 
+	repoH := repository.NewHabitRepository(dbConn)
+	svcH := service.NewHabitService(repoH)
+	handler.RegisterHabitRoutes(r, svcH)
+
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"status": "System is HEALTHY.",
