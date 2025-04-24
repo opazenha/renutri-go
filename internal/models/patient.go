@@ -2,6 +2,7 @@ package models
 
 import (
 	"time"
+	"github.com/lib/pq"
 )
 
 // Data structure for a Patient
@@ -20,7 +21,7 @@ type Patient struct {
 	MaritalStatus       MaritalStatus            `json:"maritalStatus,omitempty"`
 	Profession          string                   `json:"profession,omitempty"`
 	Address             string                   `json:"address,omitempty"`
-	Phones              []string                 `json:"phones,omitempty" gorm:"type:text[]"`
+	Phones              pq.StringArray          `json:"phones,omitempty" gorm:"type:text[]"`
 	Email               string                   `json:"email,omitempty"`
 	HealthInsurance     string                   `json:"healthInsurance,omitempty"`
 	Referral            string                   `json:"referral,omitempty"`

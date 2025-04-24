@@ -9,7 +9,7 @@ CREATE TABLE patients (
     date_of_birth DATE NOT NULL,
     profession TEXT,
     address TEXT,
-    phone TEXT,
+    phones TEXT[],
     email TEXT
 );
 

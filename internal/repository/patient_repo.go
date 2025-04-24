@@ -4,6 +4,7 @@ import (
     "renutri/internal/models"
     "github.com/google/uuid"
     "gorm.io/gorm"
+    "renutri/pkg/logger"
 )
 
 // PatientRepository defines CRUD operations for patients.
@@ -29,6 +30,8 @@ func (r *patientRepo) CreatePatient(patient *models.Patient) error {
     if patient.ID == "" {
         patient.ID = uuid.New().String()
     }
+    logger.Debug("Creating patient: %+v", patient)
+    logger.Debug("Phones field: %#v", patient.Phones)
     return r.db.Create(patient).Error
 }
 
