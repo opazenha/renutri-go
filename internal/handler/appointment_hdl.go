@@ -2,8 +2,8 @@ package handler
 
 import (
 	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"renutri/internal/models"
 	"renutri/internal/service"
 )
@@ -80,7 +80,12 @@ func (h *appointmentHandler) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	app.ID = id
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+	app.ID = objID
 	if err := h.svc.UpdateAppointment(&app); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

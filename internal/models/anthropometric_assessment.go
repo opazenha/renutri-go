@@ -1,12 +1,16 @@
 package models
 
-import "time"
+import (
+	"time"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 // AnthropometricAssessment holds body measurements and metrics.
 type AnthropometricAssessment struct {
-	ID                      string    `json:"id" gorm:"primaryKey"`
-	PatientID               string    `json:"patientId" gorm:"index;not null"`
-	AssessmentDate          time.Time `json:"assessmentDate"`
+	ID           primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	PatientID    primitive.ObjectID `bson:"patientId,omitempty" json:"patientId"`
+	AssessmentDate time.Time        `bson:"assessmentDate,omitempty" json:"assessmentDate"`
+	// Add other fields as needed, all with bson/json tags and Mongo-friendly types
 	Weight                  float64   `json:"weight"`
 	Height                  float64   `json:"height"`
 	IdealWeight             float64   `json:"idealWeight"`

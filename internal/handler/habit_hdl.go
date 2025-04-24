@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"renutri/internal/models"
 	"renutri/internal/service"
-
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/gin-gonic/gin"
 )
 
@@ -56,7 +56,12 @@ func (h *HabitHandler) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	input.ID = id
+	objID, err := primitive.ObjectIDFromHex(id)
+if err != nil {
+    c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+    return
+}
+input.ID = objID
 	if err := h.Service.Update(&input); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

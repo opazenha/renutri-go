@@ -2,16 +2,17 @@ package models
 
 import (
 	"time"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// HealthCondition records a medical condition for a patient.
+// HealthCondition represents a patient's health condition for MongoDB.
 type HealthCondition struct {
-	ID            string     `json:"id" gorm:"primaryKey"`
-	PatientID     string     `json:"patientId" gorm:"index;not null"`
-	ConditionName string     `json:"conditionName"`
-	DiagnosisDate *time.Time `json:"diagnosisDate,omitempty"`
-	Status        string     `json:"status"`
-	Medication    string     `json:"medication,omitempty"`
-	CreatedAt     time.Time  `json:"createdAt"`
-	UpdatedAt     time.Time  `json:"updatedAt"`
+	ID            primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	PatientID     primitive.ObjectID `bson:"patientId,omitempty" json:"patientId,omitempty"`
+	ConditionName string             `bson:"conditionName,omitempty" json:"conditionName"`
+	DiagnosisDate *time.Time         `bson:"diagnosisDate,omitempty" json:"diagnosisDate,omitempty"`
+	Status        string             `bson:"status,omitempty" json:"status"`
+	Medication    string             `bson:"medication,omitempty" json:"medication,omitempty"`
+	CreatedAt     time.Time          `bson:"createdAt,omitempty" json:"createdAt"`
+	UpdatedAt     time.Time          `bson:"updatedAt,omitempty" json:"updatedAt"`
 }

@@ -1,14 +1,15 @@
 package config
 
 import (
-    "fmt"
-    "github.com/joho/godotenv"
-    "os"
+	"fmt"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 // Config holds application configuration loaded from environment.
 type Config struct {
-    DBUrl string
+    MONGO_URL string
     Port  string
 }
 
@@ -16,13 +17,13 @@ type Config struct {
 func Load() (*Config, error) {
     // Load environment variables from .env file, if present
     _ = godotenv.Load()
-    dbUrl := os.Getenv("DB_URL")
-    if dbUrl == "" {
+    MONGO_URL := os.Getenv("MONGO_URL")
+    if MONGO_URL == "" {
         return nil, fmt.Errorf("DB_URL environment variable required")
     }
     port := os.Getenv("PORT")
     if port == "" {
         port = "8881"
     }
-    return &Config{DBUrl: dbUrl, Port: port}, nil
+    return &Config{MONGO_URL: MONGO_URL, Port: port}, nil
 }

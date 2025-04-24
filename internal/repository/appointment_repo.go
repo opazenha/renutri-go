@@ -1,8 +1,11 @@
 package repository
 
 import (
-	"github.com/google/uuid"
-	"gorm.io/gorm"
+	"context"
+	"errors"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"renutri/internal/models"
 )
 
@@ -17,43 +20,93 @@ type AppointmentRepository interface {
 }
 
 type appointmentRepo struct {
-	db *gorm.DB
+	collection *mongo.Collection
 }
 
-// NewAppointmentRepository returns a GORM-based AppointmentRepository.
-func NewAppointmentRepository(db *gorm.DB) AppointmentRepository {
-	return &appointmentRepo{db: db}
+func NewAppointmentRepository(collection *mongo.Collection) AppointmentRepository {
+	return &appointmentRepo{collection}
 }
 
 func (r *appointmentRepo) CreateAppointment(app *models.Appointment) error {
-	if app.ID == "" {
-		app.ID = uuid.New().String()
+	if app.ID == primitive.NilObjectID {
+		app.ID = primitive.NewObjectID()
 	}
-	return r.db.Create(app).Error
+	ctx := context.TODO()
+	_, err := r.collection.InsertOne(ctx, app)
+	return err
 }
 
 func (r *appointmentRepo) GetAppointmentByID(id string) (*models.Appointment, error) {
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
 	var app models.Appointment
-	err := r.db.First(&app, "id = ?", id).Error
-	return &app, err
+	ctx := context.TODO()
+	err = r.collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&app)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, errors.New("appointment not found")
+		}
+		return nil, err
+	}
+	return &app, nil
 }
 
 func (r *appointmentRepo) UpdateAppointment(app *models.Appointment) error {
-	return r.db.Save(app).Error
+	ctx := context.TODO()
+	filter := bson.M{"_id": app.ID}
+	update := bson.M{"$set": app}
+	_, err := r.collection.UpdateOne(ctx, filter, update)
+	return err
 }
 
 func (r *appointmentRepo) DeleteAppointment(id string) error {
-	return r.db.Delete(&models.Appointment{}, "id = ?", id).Error
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+	ctx := context.TODO()
+	_, err = r.collection.DeleteOne(ctx, bson.M{"_id": objID})
+	return err
 }
 
 func (r *appointmentRepo) ListAppointments() ([]models.Appointment, error) {
+	ctx := context.TODO()
+	cursor, err := r.collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
 	var apps []models.Appointment
-	err := r.db.Find(&apps).Error
-	return apps, err
+	for cursor.Next(ctx) {
+		var app models.Appointment
+		if err := cursor.Decode(&app); err != nil {
+			return nil, err
+		}
+		apps = append(apps, app)
+	}
+	return apps, nil
 }
 
 func (r *appointmentRepo) ListByPatient(patientID string) ([]models.Appointment, error) {
+	objID, err := primitive.ObjectIDFromHex(patientID)
+	if err != nil {
+		return nil, err
+	}
+	ctx := context.TODO()
+	cursor, err := r.collection.Find(ctx, bson.M{"patient_id": objID})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
 	var apps []models.Appointment
-	err := r.db.Where("patient_id = ?", patientID).Find(&apps).Error
-	return apps, err
+	for cursor.Next(ctx) {
+		var app models.Appointment
+		if err := cursor.Decode(&app); err != nil {
+			return nil, err
+		}
+		apps = append(apps, app)
+	}
+	return apps, nil
 }

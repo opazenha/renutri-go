@@ -1,52 +1,53 @@
 package db
 
 import (
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"context"
+	"os"
+	"sync"
+	"time"
 
-	"renutri/internal/models"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Open initializes and returns a GORM DB connection.
-func Open(dsn string) (*gorm.DB, error) {
-    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-    if err != nil {
-        return nil, err
-    }
-    // Drop all existing tables for a full reset
-    if err := db.Migrator().DropTable(
-        &models.Appointment{},
-        &models.GeneratedDocument{},
-        &models.Guidance{},
-        &models.FoodSubstitution{},
-        &models.Meal{},
-        &models.DietPlan{},
-        &models.NutritionalNeedsCalculation{},
-        &models.AnthropometricAssessment{},
-        &models.ClinicalEvaluation{},
-        &models.Habit{},
-        &models.HealthCondition{},
-        &models.Patient{},
-    ); err != nil {
-        return nil, err
-    }
-    // AutoMigrate all models
-    err = db.AutoMigrate(
-        &models.Patient{},
-        &models.HealthCondition{},
-        &models.Habit{},
-        &models.ClinicalEvaluation{},
-        &models.AnthropometricAssessment{},
-        &models.NutritionalNeedsCalculation{},
-        &models.DietPlan{},
-        &models.Meal{},
-        &models.FoodSubstitution{},
-        &models.Guidance{},
-        &models.GeneratedDocument{},
-        &models.Appointment{},
-    )
-    if err != nil {
-        return nil, err
-    }
-    return db, nil
+var (
+	clientInstance     *mongo.Client
+	clientInstanceErr  error
+	mongoOnce          sync.Once
+	mongoDatabaseName  = "renutri"
+)
+
+// GetMongoClient returns a singleton MongoDB client instance
+func GetMongoClient() (*mongo.Client, error) {
+	mongoOnce.Do(func() {
+		uri := os.Getenv("MONGO_URL")
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+		if err != nil {
+			clientInstanceErr = err
+			return
+		}
+		clientInstance = client
+		clientInstanceErr = nil
+	})
+	return clientInstance, clientInstanceErr
+}
+
+// GetDatabase returns the renutri database instance
+func GetDatabase() (*mongo.Database, error) {
+	client, err := GetMongoClient()
+	if err != nil {
+		return nil, err
+	}
+	return client.Database(mongoDatabaseName), nil
+}
+
+// GetCollection returns a collection from renutri DB by name
+func GetCollection(collectionName string) (*mongo.Collection, error) {
+	db, err := GetDatabase()
+	if err != nil {
+		return nil, err
+	}
+	return db.Collection(collectionName), nil
 }

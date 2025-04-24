@@ -1,21 +1,22 @@
 package models
 
-import "time"
+import (
+	"time"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 // NutritionalNeedsCalculation records metabolic and nutrient requirements.
 type NutritionalNeedsCalculation struct {
-	ID                  string    `json:"id" gorm:"primaryKey"`
-	PatientID           string    `json:"patientId" gorm:"index;not null"`
-	CalculationDate     time.Time `json:"calculationDate"`
-	TMB                 float64   `json:"tmb"`
-	GEB                 float64   `json:"geb"`
-	GET                 float64   `json:"get"`
-	VET                 float64   `json:"vet"`
-	Carbohydrates       float64   `json:"carbohydrates"`
-	Protein             float64   `json:"protein"`
-	Lipids              float64   `json:"lipids"`
-	MicronutrientNeeds  string    `json:"micronutrientNeeds"`
-	WaterIntakeML       float64   `json:"waterIntakeMl"`
-	CreatedAt           time.Time `json:"createdAt"`
-	UpdatedAt           time.Time `json:"updatedAt"`
+	ID              primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	PatientID       primitive.ObjectID `bson:"patientId,omitempty" json:"patientId"`
+	CalculationDate time.Time          `bson:"calculationDate,omitempty" json:"calculationDate"`
+	TMB             float64            `bson:"tmb,omitempty" json:"tmb"`
+	GEB             float64            `bson:"geb,omitempty" json:"geb"`
+	GET             float64            `bson:"get,omitempty" json:"get"`
+	VET             float64            `bson:"vet,omitempty" json:"vet"`
+	Protein         float64            `bson:"protein,omitempty" json:"protein"`
+	Lipids          float64            `bson:"lipids,omitempty" json:"lipids"`
+	Carbohydrates   float64            `bson:"carbohydrates,omitempty" json:"carbohydrates"`
+	CreatedAt       time.Time          `bson:"createdAt,omitempty" json:"createdAt"`
+	UpdatedAt       time.Time          `bson:"updatedAt,omitempty" json:"updatedAt"`
 }

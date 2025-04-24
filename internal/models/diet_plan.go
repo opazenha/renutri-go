@@ -1,19 +1,23 @@
 package models
 
-import "time"
+import (
+	"time"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 // DietPlan defines a meal plan with optional structure.
 type DietPlan struct {
-	ID                 string    `json:"id" gorm:"primaryKey"`
-	PatientID          string    `json:"patientId" gorm:"index;not null"`
-	PlanDate           time.Time `json:"planDate"`
-	Description        string    `json:"description"`
-	Portions           string    `json:"portions"`
-	FoodGroups         string    `json:"foodGroups"`
-	MealStructure      []Meal    `json:"mealStructure,omitempty" gorm:"foreignKey:DietPlanID;constraint:OnDelete:CASCADE"`
-	CreatedAt          time.Time `json:"createdAt"`
-	UpdatedAt          time.Time `json:"updatedAt"`
+	ID           primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	PatientID    primitive.ObjectID `bson:"patientId,omitempty" json:"patientId"`
+	PlanDate     time.Time          `bson:"planDate,omitempty" json:"planDate"`
+	Description  string             `bson:"description,omitempty" json:"description"`
+	Portions     string             `bson:"portions,omitempty" json:"portions"`
+	FoodGroups   string             `bson:"foodGroups,omitempty" json:"foodGroups"`
+	MealStructure []Meal            `bson:"mealStructure,omitempty" json:"mealStructure"`
+	CreatedAt    time.Time          `bson:"createdAt,omitempty" json:"createdAt"`
+	UpdatedAt    time.Time          `bson:"updatedAt,omitempty" json:"updatedAt"`
 }
+
 
 type Meal struct {
 	ID            string    `json:"id" gorm:"primaryKey"`

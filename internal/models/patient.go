@@ -2,44 +2,42 @@ package models
 
 import (
 	"time"
-	"github.com/lib/pq"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Data structure for a Patient
-// Central entity holding all patient information
-
-// Patient represents a nutritionist's patient record with full relational sub-entities.
+// Patient represents a nutritionist's patient record for MongoDB.
 type Patient struct {
-	ID                 string                   `json:"id" gorm:"primaryKey"`
+	ID                 primitive.ObjectID   `bson:"_id,omitempty" json:"id"`
 
 	// --- Personal Data ---
-	Name                string                   `json:"name,omitempty"`
-	Birthdate           time.Time                `json:"birthdate,omitempty"`
-	Age                 int                      `json:"age,omitempty"`
-	Sex                 Gender                   `json:"sex,omitempty"`
-	EducationLevel      EducationLevel           `json:"educationLevel,omitempty"`
-	MaritalStatus       MaritalStatus            `json:"maritalStatus,omitempty"`
-	Profession          string                   `json:"profession,omitempty"`
-	Address             string                   `json:"address,omitempty"`
-	Phones              pq.StringArray          `json:"phones,omitempty" gorm:"type:text[]"`
-	Email               string                   `json:"email,omitempty"`
-	HealthInsurance     string                   `json:"healthInsurance,omitempty"`
-	Referral            string                   `json:"referral,omitempty"`
-	ConsultationReason  string                   `json:"consultationReason,omitempty"`
-	Observations        string                   `json:"observations,omitempty"`
+	Name                string              `bson:"name,omitempty" json:"name,omitempty"`
+	Birthdate           time.Time           `bson:"birthdate,omitempty" json:"birthdate,omitempty"`
+	Age                 int                 `bson:"age,omitempty" json:"age,omitempty"`
+	Sex                 string              `bson:"sex,omitempty" json:"sex,omitempty"`
+	EducationLevel      string              `bson:"educationLevel,omitempty" json:"educationLevel,omitempty"`
+	MaritalStatus       string              `bson:"maritalStatus,omitempty" json:"maritalStatus,omitempty"`
+	Profession          string              `bson:"profession,omitempty" json:"profession,omitempty"`
+	Address             string              `bson:"address,omitempty" json:"address,omitempty"`
+	Phones              []string            `bson:"phones,omitempty" json:"phones,omitempty"`
+	Email               string              `bson:"email,omitempty" json:"email,omitempty"`
+	HealthInsurance     string              `bson:"healthInsurance,omitempty" json:"healthInsurance,omitempty"`
+	Referral            string              `bson:"referral,omitempty" json:"referral,omitempty"`
+	ConsultationReason  string              `bson:"consultationReason,omitempty" json:"consultationReason,omitempty"`
+	Observations        string              `bson:"observations,omitempty" json:"observations,omitempty"`
 
 	// --- Clinical Data Relations ---
-	HealthConditions            []HealthCondition           `json:"healthConditions,omitempty" gorm:"foreignKey:PatientID;constraint:OnDelete:CASCADE"`
-	Habit                       Habit                       `json:"habit,omitempty" gorm:"foreignKey:PatientID;constraint:OnDelete:CASCADE"`
-	ClinicalEvaluations         []ClinicalEvaluation        `json:"clinicalEvaluations,omitempty" gorm:"foreignKey:PatientID;constraint:OnDelete:CASCADE"`
-	AnthropometricAssessments   []AnthropometricAssessment  `json:"anthropometricAssessments,omitempty" gorm:"foreignKey:PatientID;constraint:OnDelete:CASCADE"`
-	NutritionalNeedsCalculations []NutritionalNeedsCalculation `json:"nutritionalNeedsCalculations,omitempty" gorm:"foreignKey:PatientID;constraint:OnDelete:CASCADE"`
-	DietPlans                   []DietPlan                  `json:"dietPlans,omitempty" gorm:"foreignKey:PatientID;constraint:OnDelete:CASCADE"`
-	GuidanceRecords            []Guidance                  `json:"guidanceRecords,omitempty" gorm:"foreignKey:PatientID;constraint:OnDelete:CASCADE"`
-	GeneratedDocuments         []GeneratedDocument         `json:"generatedDocuments,omitempty" gorm:"foreignKey:PatientID;constraint:OnDelete:CASCADE"`
-	Appointments                []Appointment               `json:"appointments,omitempty" gorm:"foreignKey:PatientID;constraint:OnDelete:CASCADE"`
+	// For MongoDB, these can be []primitive.ObjectID or embedded structs, depending on use-case.
+	HealthConditionIDs            []primitive.ObjectID   `bson:"healthConditionIds,omitempty" json:"healthConditionIds,omitempty"`
+	HabitID                      *primitive.ObjectID    `bson:"habitId,omitempty" json:"habitId,omitempty"`
+	ClinicalEvaluationIDs         []primitive.ObjectID   `bson:"clinicalEvaluationIds,omitempty" json:"clinicalEvaluationIds,omitempty"`
+	AnthropometricAssessmentIDs   []primitive.ObjectID   `bson:"anthropometricAssessmentIds,omitempty" json:"anthropometricAssessmentIds,omitempty"`
+	NutritionalNeedsCalculationIDs []primitive.ObjectID  `bson:"nutritionalNeedsCalculationIds,omitempty" json:"nutritionalNeedsCalculationIds,omitempty"`
+	DietPlanIDs                   []primitive.ObjectID   `bson:"dietPlanIds,omitempty" json:"dietPlanIds,omitempty"`
+	GuidanceRecordIDs             []primitive.ObjectID   `bson:"guidanceRecordIds,omitempty" json:"guidanceRecordIds,omitempty"`
+	GeneratedDocumentIDs          []primitive.ObjectID   `bson:"generatedDocumentIds,omitempty" json:"generatedDocumentIds,omitempty"`
+	AppointmentIDs                []primitive.ObjectID   `bson:"appointmentIds,omitempty" json:"appointmentIds,omitempty"`
 
 	// Timestamps
-	CreatedAt         time.Time                `json:"createdAt"`
-	UpdatedAt         time.Time                `json:"updatedAt"`
+	CreatedAt         time.Time             `bson:"createdAt,omitempty" json:"createdAt"`
+	UpdatedAt         time.Time             `bson:"updatedAt,omitempty" json:"updatedAt"`
 }

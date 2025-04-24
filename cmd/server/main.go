@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"renutri/internal/config"
 	"renutri/internal/db"
 	"renutri/internal/handler"
 	"renutri/internal/models"
@@ -15,49 +14,31 @@ import (
 )
 
 func main() {
-	// Load config
-	cfg, err := config.Load()
+	// Connect to MongoDB
+	mongoClient, err := db.GetMongoClient()
 	if err != nil {
 		panic(err)
 	}
+	database := mongoClient.Database("renutri")
 
-	// Connect database
-	dbConn, err := db.Open(cfg.DBUrl)
-	if err != nil {
-		panic(err)
-	}
-
-	// clean legacy schema and migrate all relational tables
-	if err := dbConn.Exec("DROP TABLE IF EXISTS patients CASCADE").Error; err != nil {
-		panic(err)
-	}
-	if err := dbConn.AutoMigrate(
-		&models.Patient{},
-		&models.Appointment{},
-		&models.HealthCondition{},
-		&models.Habit{},
-		&models.ClinicalEvaluation{},
-		&models.AnthropometricAssessment{},
-		&models.NutritionalNeedsCalculation{},
-		&models.DietPlan{},
-		&models.Meal{},
-		&models.FoodSubstitution{},
-		&models.Guidance{},
-		&models.GeneratedDocument{},
-	); err != nil {
-		panic(fmt.Errorf("auto-migrate models: %w", err))
-	}
-
+	// Initialize gin router
 	r := gin.Default()
 
-	// Setup repository, service, handler
-	repo := repository.NewPatientRepository(dbConn)
-	svc := service.NewPatientService(repo)
-	handler.NewPatientHandler(r, svc)
+	// Initialize repositories/services with the MongoDB database handle
+	patientCollection := database.Collection("patients")
+	patientRepo := repository.NewPatientRepository(patientCollection)
+	patientSvc := service.NewPatientService(patientRepo)
+	handler.NewPatientHandler(r, patientSvc)
 
-	repoH := repository.NewHabitRepository(dbConn)
-	svcH := service.NewHabitService(repoH)
-	handler.RegisterHabitRoutes(r, svcH)
+	appointmentCollection := database.Collection("appointments")
+	appointmentRepo := repository.NewAppointmentRepository(appointmentCollection)
+	appointmentSvc := service.NewAppointmentService(appointmentRepo)
+	handler.NewAppointmentHandler(r, appointmentSvc)
+
+	habitCollection := database.Collection("habits")
+	habitRepo := repository.NewHabitRepository(habitCollection)
+	habitSvc := service.NewHabitService(habitRepo)
+	handler.RegisterHabitRoutes(r, habitSvc)
 
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

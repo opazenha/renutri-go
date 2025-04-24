@@ -2,12 +2,13 @@ package models
 
 import (
 	"time"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Appointment holds details about a single patient visit/interaction.
 type Appointment struct {
-	ID            string        `json:"id" gorm:"primaryKey"`
-	PatientID     string        `json:"patientId" gorm:"index;not null"`
+	ID            primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	PatientID     primitive.ObjectID `bson:"patient_id" json:"patientId"`
 	Date          time.Time     `json:"date,omitempty"`
 	Time          string        `json:"time,omitempty"`
 	ServiceType   ServiceType   `json:"serviceType,omitempty"`
