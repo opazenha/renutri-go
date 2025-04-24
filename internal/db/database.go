@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -20,6 +21,7 @@ var (
 // GetMongoClient returns a singleton MongoDB client instance
 func GetMongoClient() (*mongo.Client, error) {
 	mongoOnce.Do(func() {
+		_ = godotenv.Load()
 		uri := os.Getenv("MONGO_URL")
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()

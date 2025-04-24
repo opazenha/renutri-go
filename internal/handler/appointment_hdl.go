@@ -18,8 +18,8 @@ func NewAppointmentHandler(r *gin.Engine, svc service.AppointmentService) {
 	routes.PUT("/:id", h.Update)
 	routes.DELETE("/:id", h.Delete)
 
-	// List appointments by patient
-	r.GET("/patients/:patientId/appointments", h.ListByPatient)
+	// List appointments by patient (RESTful, non-conflicting)
+	r.GET("/patients/:id/appointments", h.ListByPatient)
 }
 
 type appointmentHandler struct {
@@ -50,9 +50,9 @@ func (h *appointmentHandler) List(c *gin.Context) {
 	c.JSON(http.StatusOK, apps)
 }
 
-// ListByPatient handles GET /patients/:patientId/appointments
+// ListByPatient handles GET /patients/:id/appointments
 func (h *appointmentHandler) ListByPatient(c *gin.Context) {
-	pid := c.Param("patientId")
+	pid := c.Param("id")
 	apps, err := h.svc.ListByPatient(pid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
