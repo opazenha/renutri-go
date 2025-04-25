@@ -52,7 +52,7 @@ type BehavioralAssessment struct {
 	Date      time.Time          `bson:"date,omitempty" json:"date,omitempty"`            // Date the assessment was performed
 
 	// --- 4.1. Fumo e álcool (Smoking and Alcohol) ---
-	DoesSmoke               *bool          `bson:"doesSmoke,omitempty" json:"doesSmoke,omitempty"`                           // Fuma?
+	IsSmoker                *bool          `bson:"isSmoker,omitempty" json:"isSmoker,omitempty"`                           // Fuma?
 	SmokingDetails          []SmokingEntry `bson:"smokingDetails,omitempty" json:"smokingDetails,omitempty"`               // Details if DoesSmoke is true
 	ConsumesAlcohol         *bool          `bson:"consumesAlcohol,omitempty" json:"consumesAlcohol,omitempty"`               // Ingere bebidas alcoólicas?
 	AlcoholConsumption      []AlcoholEntry `bson:"alcoholConsumption,omitempty" json:"alcoholConsumption,omitempty"`       // Details if ConsumesAlcohol is true

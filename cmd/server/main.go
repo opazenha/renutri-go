@@ -35,11 +35,6 @@ func main() {
 	appointmentSvc := service.NewAppointmentService(appointmentRepo)
 	handler.NewAppointmentHandler(r, appointmentSvc)
 
-	habitCollection := database.Collection("habits")
-	habitRepo := repository.NewHabitRepository(habitCollection)
-	habitSvc := service.NewHabitService(habitRepo)
-	handler.RegisterHabitRoutes(r, habitSvc)
-
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"status": "System is HEALTHY.",
