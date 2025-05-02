@@ -2,6 +2,7 @@ package models
 
 import (
 	"time"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -17,7 +18,6 @@ type DietPlan struct {
 	CreatedAt    time.Time          `bson:"createdAt,omitempty" json:"createdAt"`
 	UpdatedAt    time.Time          `bson:"updatedAt,omitempty" json:"updatedAt"`
 }
-
 
 type Meal struct {
 	ID            string    `json:"id" gorm:"primaryKey"`

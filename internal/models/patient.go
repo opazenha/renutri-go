@@ -61,6 +61,9 @@ type Patient struct {
 	ConsultationReason  string              `bson:"consultationReason,omitempty" json:"consultationReason,omitempty"`
 	Observations        string              `bson:"observations,omitempty" json:"observations,omitempty"`
 
+	// --- Patient Evolution ---
+	Evolution 			string 				 `bson:"evolution,omitempty" json:"evolution,omitempty"`
+
 	// --- Clinical Data Relations ---
 	// For MongoDB, these can be []primitive.ObjectID or embedded structs, depending on use-case.
 	HealthConditionIDs            []primitive.ObjectID   `bson:"healthConditionIds,omitempty" json:"healthConditionIds,omitempty"`
@@ -72,6 +75,7 @@ type Patient struct {
 	GuidanceRecordIDs             []primitive.ObjectID   `bson:"guidanceRecordIds,omitempty" json:"guidanceRecordIds,omitempty"`
 	GeneratedDocumentIDs          []primitive.ObjectID   `bson:"generatedDocumentIds,omitempty" json:"generatedDocumentIds,omitempty"`
 	AppointmentIDs                []primitive.ObjectID   `bson:"appointmentIds,omitempty" json:"appointmentIds,omitempty"`
+
 
 	// Timestamps
 	CreatedAt         time.Time             `bson:"createdAt,omitempty" json:"createdAt"`
